@@ -1,0 +1,39 @@
+*Corro el 355_rpart_binaria2_BO_repe_xval_over con:
+
+	PARAM$semilla_azar <- c(
+  	100103, 100189, 101987, 991981, 991987, #mis 5 semillas
+  	753587, 247759, 253369, 955127, 800519
+	)
+
+	# folds del cross validation
+	PARAM$xval_folds <- 5
+
+	# cantidad de iteraciones de la Optimizacion Bayesiana
+	PARAM$BO_iter <- 20
+
+	# la letra L al final de 1L significa ENTERO
+	PARAM$hs <- makeParamSet(
+  	makeNumericParam("cp", lower = -1L, upper = -1L),
+  	makeIntegerParam("minsplit", lower = 500L, upper = 1500L),
+  	makeIntegerParam("minbucket", lower = 200L, upper = 800L),
+  	makeIntegerParam("maxdepth", lower = 6L, upper = 12L),
+  	makeIntegerParam("corte", lower = 9500L, upper = 9500L),
+  	makeIntegerParam("oversampling", lower = 100L, upper = 100L),
+  	forbidden = quote(minbucket > 0.5 * minsplit)
+	)
+
+	Dejo fijo corte que fue estimado por otros compañeros en 9500, cp en -1 y oversampling 100. Entendí que en
+	el codigo si dejaba en 100, le aplicaba ese peso a la clase minoritaria
+
+*Saco los mejores hiperparametros y se lo paso a 366_aplicar_modelo
+	cp= -1	
+	minsplit = 1396	
+	minbucket = 366	
+	maxdepth = 7	
+	corte = 9500
+	oversampling = 100
+
+	La ganancia obtenida en local fue de 76972000 en la iteración 23.
+	Sin embargo, no fue la mejor obtenida en el público. Decidi elegir esta, porque la que mejor me dio
+	era con una sola semilla. Esta me pareció más robusta por ser un 10 repeated 5-fold
+
