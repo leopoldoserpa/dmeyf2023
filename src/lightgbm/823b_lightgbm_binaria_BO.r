@@ -39,8 +39,7 @@ PARAM$input$dataset <- "./datasets/competencia_02.csv.gz"
 #  mucha magia emerger de esta eleccion
 PARAM$input$testing <- c(202105)
 PARAM$input$validation <- c(202104)
-PARAM$input$training <- c(201905,201906,201907,201908,201909,201910,201911,201912,202001,202002,202003,
-                          202010,202011,202012,202101,202102,202103)
+PARAM$input$training <- c(201905, 201906, 201907, 201908, 201909, 201910, 201911, 201912, 202001, 202002, 202003, 202010, 202011, 202012, 202101, 202102, 202103)
 
 # un undersampling de 0.1  toma solo el 10% de los CONTINUA
 PARAM$trainingstrategy$undersampling <- 0.1
@@ -70,19 +69,19 @@ PARAM$lgb_basicos <- list(
   lambda_l2 = 0.0, # lambda_l2 >= 0.0
   max_bin = 31L, # lo debo dejar fijo, no participa de la BO
   num_iterations = 9999, # un numero muy grande, lo limita early_stopping_rounds
-
+  
   bagging_fraction = 1.0, # 0.0 < bagging_fraction <= 1.0
   pos_bagging_fraction = 1.0, # 0.0 < pos_bagging_fraction <= 1.0
   neg_bagging_fraction = 1.0, # 0.0 < neg_bagging_fraction <= 1.0
   is_unbalance = FALSE, #
   scale_pos_weight = 1.0, # scale_pos_weight > 0.0
-
+  
   drop_rate = 0.1, # 0.0 < neg_bagging_fraction <= 1.0
   max_drop = 50, # <=0 means no limit
   skip_drop = 0.5, # 0.0 <= skip_drop <= 1.0
-
+  
   extra_trees = TRUE, # Magic Sauce
-
+  
   seed = PARAM$lgb_semilla
 )
 
@@ -108,24 +107,24 @@ loguear <- function(
     ext = ".txt", verbose = TRUE) {
   archivo <- arch
   if (is.na(arch)) archivo <- paste0(folder, substitute(reg), ext)
-
+  
   if (!file.exists(archivo)) # Escribo los titulos
-    {
-      linea <- paste0(
-        "fecha\t",
-        paste(list.names(reg), collapse = "\t"), "\n"
-      )
-
-      cat(linea, file = archivo)
-    }
-
+  {
+    linea <- paste0(
+      "fecha\t",
+      paste(list.names(reg), collapse = "\t"), "\n"
+    )
+    
+    cat(linea, file = archivo)
+  }
+  
   linea <- paste0(
     format(Sys.time(), "%Y%m%d %H%M%S"), "\t", # la fecha y hora
     gsub(", ", "\t", toString(reg)), "\n"
   )
-
+  
   cat(linea, file = archivo, append = TRUE) # grabo al archivo
-
+  
   if (verbose) cat(linea) # imprimo por pantalla
 }
 #------------------------------------------------------------------------------
@@ -136,43 +135,43 @@ vcant_optima <- c()
 fganancia_lgbm_meseta <- function(probs, datos) {
   vlabels <- get_field(datos, "label")
   vpesos <- get_field(datos, "weight")
-
-
+  
+  
   GLOBAL_arbol <<- GLOBAL_arbol + 1
   tbl <- as.data.table(list(
     "prob" = probs,
     "gan" = ifelse(vlabels == 1 & vpesos > 1,
-      PARAM$hyperparametertuning$POS_ganancia,
-      PARAM$hyperparametertuning$NEG_ganancia  )
+                   PARAM$hyperparametertuning$POS_ganancia,
+                   PARAM$hyperparametertuning$NEG_ganancia  )
   ))
-
+  
   setorder(tbl, -prob)
   tbl[, posicion := .I]
   tbl[, gan_acum := cumsum(gan)]
-
+  
   tbl[, gan_suavizada :=
-    frollmean(
-      x = gan_acum, n = 2001, align = "center",
-      na.rm = TRUE, hasNA = TRUE
-    )]
-
+        frollmean(
+          x = gan_acum, n = 2001, align = "center",
+          na.rm = TRUE, hasNA = TRUE
+        )]
+  
   gan <- tbl[, max(gan_suavizada, na.rm = TRUE)]
-
-
+  
+  
   pos <- which.max(tbl[, gan_suavizada])
   vcant_optima <<- c(vcant_optima, pos)
-
+  
   if (GLOBAL_arbol %% 10 == 0) {
     if (gan > GLOBAL_gan_max) GLOBAL_gan_max <<- gan
-
+    
     cat("\r")
     cat(
       "Validate ", GLOBAL_iteracion, " ", " ",
       GLOBAL_arbol, "  ", gan, "   ", GLOBAL_gan_max, "   "
     )
   }
-
-
+  
+  
   return(list(
     "name" = "ganancia",
     "value" = gan,
@@ -184,13 +183,13 @@ fganancia_lgbm_meseta <- function(probs, datos) {
 EstimarGanancia_lightgbm <- function(x) {
   gc()
   GLOBAL_iteracion <<- GLOBAL_iteracion + 1L
-
+  
   # hago la union de los parametros basicos y los moviles que vienen en x
   param_completo <- c(PARAM$lgb_basicos, x)
-
+  
   param_completo$early_stopping_rounds <-
     as.integer(400 + 4 / param_completo$learning_rate)
-
+  
   GLOBAL_arbol <<- 0L
   GLOBAL_gan_max <<- -Inf
   vcant_optima <<- c()
@@ -202,21 +201,21 @@ EstimarGanancia_lightgbm <- function(x) {
     param = param_completo,
     verbose = -100
   )
-
+  
   cat("\n")
-
+  
   cant_corte <- vcant_optima[modelo_train$best_iter]
-
+  
   # aplico el modelo a testing y calculo la ganancia
   prediccion <- predict(
     modelo_train,
     data.matrix(dataset_test[, campos_buenos, with = FALSE])
   )
-
+  
   tbl <- copy(dataset_test[, list("gan" = ifelse(clase_ternaria == "BAJA+2",
-    PARAM$hyperparametertuning$POS_ganancia, 
-    PARAM$hyperparametertuning$NEG_ganancia))])
-
+                                                 PARAM$hyperparametertuning$POS_ganancia, 
+                                                 PARAM$hyperparametertuning$NEG_ganancia))])
+  
   tbl[, prob := prediccion]
   setorder(tbl, -prob)
   tbl[, gan_acum := cumsum(gan)]
@@ -224,44 +223,44 @@ EstimarGanancia_lightgbm <- function(x) {
     x = gan_acum, n = 2001,
     align = "center", na.rm = TRUE, hasNA = TRUE
   )]
-
-
+  
+  
   ganancia_test <- tbl[, max(gan_suavizada, na.rm = TRUE)]
-
+  
   cantidad_test_normalizada <- which.max(tbl[, gan_suavizada])
-
+  
   rm(tbl)
   gc()
-
+  
   ganancia_test_normalizada <- ganancia_test
-
-
+  
+  
   # voy grabando las mejores column importance
   if (ganancia_test_normalizada > GLOBAL_gananciamax) {
     GLOBAL_gananciamax <<- ganancia_test_normalizada
     tb_importancia <- as.data.table(lgb.importance(modelo_train))
-
+    
     fwrite(tb_importancia,
-      file = paste0("impo_", sprintf("%03d", GLOBAL_iteracion), ".txt"),
-      sep = "\t"
+           file = paste0("impo_", sprintf("%03d", GLOBAL_iteracion), ".txt"),
+           sep = "\t"
     )
-
+    
     rm(tb_importancia)
   }
-
-
+  
+  
   # logueo final
   ds <- list("cols" = ncol(dtrain), "rows" = nrow(dtrain))
   xx <- c(ds, copy(param_completo))
-
+  
   xx$early_stopping_rounds <- NULL
   xx$num_iterations <- modelo_train$best_iter
   xx$estimulos <- cantidad_test_normalizada
   xx$ganancia <- ganancia_test_normalizada
   xx$iteracion_bayesiana <- GLOBAL_iteracion
-
+  
   loguear(xx, arch = "BO_log.txt")
-
+  
   set.seed(PARAM$lgb_semilla, kind = "L'Ecuyer-CMRG")
   return(ganancia_test_normalizada)
 }
@@ -274,7 +273,6 @@ setwd("~/buckets/b1/") # Establezco el Working Directory
 
 # cargo el dataset donde voy a entrenar el modelo
 dataset <- fread(PARAM$input$dataset)
-
 
 # creo la carpeta donde va el experimento
 dir.create("./exp/", showWarnings = FALSE)
@@ -318,7 +316,7 @@ for (campo in campos_buenos) {
 }
 
 #FIltro aquellas variables donde zero_ratio es =1
-  
+
 # Initialize an empty list to store selected variables
 selected_variables <- list()
 
@@ -337,17 +335,17 @@ for (campo in names(results_list)) {
 selected_variables
 
 -------------------------------------------------------------------------
-#Trato usar esto como filtro
+  #Trato usar esto como filtro
   
-# Initialize a list to store filter conditions for each selected variable
-filter_conditions <- list()
+  # Initialize a list to store filter conditions for each selected variable
+  filter_conditions <- list()
 
 # Loop through each selected variable in 'selected_variables'
 for (variable_name in names(selected_variables)) {
   # Get the 'foto_mes' values for which 'zero_ratio' is 1
   filtered_foto_mes <- selected_variables[[variable_name]]$foto_mes
   
-# Create a filter condition for the current variable and 'foto_mes'
+  # Create a filter condition for the current variable and 'foto_mes'
   filter_condition <- dataset$foto_mes %in% filtered_foto_mes
   
   # Add the filter condition to the list
@@ -368,17 +366,21 @@ dataset[combined_filter, names(selected_variables) := NA]
 # por ahora, no hago nada
 
 # Ranking de las variables expresadas en pesos pero sin centrar en cero
-diccionario <- fread("./datasets/DiccionarioDatos_2023.csv")
+diccionario <- fread("~/buckets/b1/datasets/DiccionarioDatos_2023.csv")
 
 features_pesos <- as.character(diccionario[unidad == 'pesos', campo])
 
-a_rankear <- dataset_small[, ..features_pesos]
-
 # Loop through each column in features_pesos and calculate the rank
 for (i in features_pesos) {
-  dataset_small[, (i) := frankv(dataset_small[[i]], order = 1L, na.last = 'keep', ties.method = "dense")]
+  dataset[, (i) := frankv(dataset[[i]], order = 1L, na.last = 'keep', ties.method = "dense")]
 }
 
+dataset[, 
+        .(foto_mes, numero_de_cliente, mrentabilidad), 
+        keyby = .(foto_mes, numero_de_cliente)
+][order(-mrentabilidad)]
+
+dataset
 # Feature Engineering Historico  ----------------------------------------------
 #   aqui deben calcularse los  lags y  lag_delta
 #   Sin lags no hay paraiso !  corta la bocha
@@ -398,12 +400,14 @@ cols = c('foto_mes', 'numero_de_cliente','mrentabilidad',paste0('mrentabilidad_l
 
 dataset[numero_de_cliente==29183981, ..cols]
 
+length(dataset$numero_de_cliente)
+
 # Calculate the differences for all columns in columnas_lag
 for (col in columnas_lag) {
   for (i in lag_range) {
     lag_col <- paste0(col, "_lag_", i)
-    diff_col <- paste0(col, "_lag_diff_", i, "-", col)
-    dataset_small[, (diff_col) := get(col) - get(lag_col)]
+    diff_col <- paste0(col, "_deltalag_", i)
+    dataset[, (diff_col) := get(col) - get(lag_col)]
   }
 }
 
@@ -447,8 +451,8 @@ dtrain <- lgb.Dataset(
   data = data.matrix(dataset[training == 1L, campos_buenos, with = FALSE]),
   label = dataset[training == 1L, clase01],
   weight = dataset[training == 1L, 
-    ifelse(clase_ternaria == "BAJA+2", 1.0000001, 
-      ifelse(clase_ternaria == "BAJA+1", 1.0, 1.0))],
+                   ifelse(clase_ternaria == "BAJA+2", 1.0000001, 
+                          ifelse(clase_ternaria == "BAJA+1", 1.0, 1.0))],
   free_raw_data = FALSE
 )
 
@@ -463,8 +467,8 @@ dvalidate <- lgb.Dataset(
   data = data.matrix(dataset[validation == 1L, campos_buenos, with = FALSE]),
   label = dataset[validation == 1L, clase01],
   weight = dataset[validation == 1L, 
-    ifelse(clase_ternaria == "BAJA+2", 1.0000001, 
-      ifelse(clase_ternaria == "BAJA+1", 1.0, 1.0))],
+                   ifelse(clase_ternaria == "BAJA+2", 1.0000001, 
+                          ifelse(clase_ternaria == "BAJA+1", 1.0, 1.0))],
   free_raw_data = FALSE
 )
 
@@ -507,7 +511,7 @@ ctrl <- setMBOControlTermination(
   iters = PARAM$bo_iteraciones
 ) # cantidad de iteraciones
 
-# defino el método estandar para la creacion de los puntos iniciales,
+# defino el m�todo estandar para la creacion de los puntos iniciales,
 # los "No Inteligentes"
 ctrl <- setMBOControlInfill(ctrl, crit = makeMBOInfillCritEI())
 
@@ -528,4 +532,4 @@ if (!file.exists(kbayesiana)) {
 }
 
 
-cat("\n\nLa optimizacion Bayesiana ha terminado\n")
+cat("\n\nLa optimizacion Bayesiana ha terminado\n") 
