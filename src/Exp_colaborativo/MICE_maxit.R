@@ -370,7 +370,7 @@ dataset[combined_filter, names(selected_variables) := NA]
 sum(is.na(dataset))
 cat('NAs en train', sum(is.na(dataset[foto_mes %in% PARAM$input$training,..campos_buenos])),'\n',
     'NAs en test', sum(is.na(dataset[foto_mes %in% PARAM$input$testing,..campos_buenos])),'\n',
-    'NAs en test', sum(is.na(dataset[foto_mes %in% PARAM$input$validation,..campos_buenos])))
+    'NAs en validation', sum(is.na(dataset[foto_mes %in% PARAM$input$validation,..campos_buenos])))
 
 
 # imp.train <- mice(dataset[foto_mes %in% PARAM$input$training,..campos_buenos],
@@ -389,7 +389,13 @@ imp.train <-futuremice(
     maxit=10
     #plan = 'multiprocess'
     )
-  
+
+# Save imputation object after every 10 imputations
+for (i in seq(1, 10, by = 1)) {
+  imp_subset <- imp_train
+  imp_subset$m <- i
+  saveRDS(imp_subset, paste0("~/buckets/b1/exp/EC_HT8231_regresion/imp_train_", i, ".rds"))
+}  
 
 # imp.test <- mice.mids(imp.train, newdata = dataset[foto_mes %in% PARAM$input$testing,..campos_buenos],maxit=2)
 
