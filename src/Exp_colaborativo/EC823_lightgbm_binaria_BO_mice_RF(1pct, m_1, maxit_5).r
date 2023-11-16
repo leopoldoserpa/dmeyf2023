@@ -38,7 +38,7 @@ options(error = function() {
 PARAM <- list()
 
 #INDICAR METODO DE IMPUTACION
-metodo_imputacion <- "mice_RF"
+metodo_imputacion <- "mice_RF_maxit5"
 
 PARAM$experimento <- paste("EC_HT8230",metodo_imputacion,sep="_")
 
