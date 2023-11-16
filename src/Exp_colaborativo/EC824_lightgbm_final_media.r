@@ -19,7 +19,7 @@ metodo_imputacion <- "media"
 
 PARAM$experimento <- paste("KA8240",metodo_imputacion,sep="_")
 
-PARAM$input$dataset <- "./datasets/competencia_03.csv.gz"
+PARAM$input$dataset <- "./datasets/competencia_02.csv.gz"
 
 # meses donde se entrena el modelo
 PARAM$input$training <- c(202010,202011,202012, 202101, 202102, 202103,202104,202105)
@@ -29,10 +29,10 @@ PARAM$finalmodel$semilla <- c(290497, 540187, 987851, 984497, 111893, 100103, 10
 
 # hiperparametros intencionalmente NO optimos
 PARAM$finalmodel$optim$num_iterations <- 894
-PARAM$finalmodel$optim$learning_rate <- 0.0248459394257132
-PARAM$finalmodel$optim$feature_fraction <- 0.751690403203922
-PARAM$finalmodel$optim$min_data_in_leaf <- 8787
-PARAM$finalmodel$optim$num_leaves <- 391
+PARAM$finalmodel$optim$learning_rate <- 0.0708480381061863
+PARAM$finalmodel$optim$feature_fraction <- 0.432685265537951
+PARAM$finalmodel$optim$min_data_in_leaf <- 18833
+PARAM$finalmodel$optim$num_leaves <- 370
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -110,14 +110,14 @@ dataset[combined_filter, names(selected_variables) := NA]
 #------------------------------------------------------------------------------
 #Imputación de nulos
 
-taining_subset <- dataset[foto_mes %in% c(202010, 202011, 202012, 202101, 202102, 202103), ..campos_buenos]
+taining_subset <- dataset[foto_mes %in% c(202010, 202011, 202012, 202101, 202102, 202103, 202104, 202105), ..campos_buenos]
 
-small_dataset <- dataset[foto_mes %in% c(202010, 202011, 202012, 202101, 202102, 202103, 202104, 202105)]
+# small_dataset <- dataset[foto_mes %in% c(202010, 202011, 202012, 202101, 202102, 202103, 202104, 202105)]
 
 means_training <- lapply(taining_subset, mean, na.rm = TRUE)
 
 # Chequeo nulos
-sum(is.na(dataset[foto_mes %in% c(202010, 202011, 202012, 202101, 202102, 202103, 202104, 202105)]))
+sum(is.na(dataset[foto_mes %in% c(202010, 202011, 202012, 202101, 202102, 202103, 202104, 202105, 202107)]))
 
 # Reemplazo por la media de training, en todos los datasets! Solo con esto andaría. Siguen habiendo problemas de truncamiento
 for (col in names(taining_subset)) {
@@ -125,7 +125,7 @@ for (col in names(taining_subset)) {
 }
 
 # Chequeo que no hay nulos
-sum(is.na(dataset[foto_mes %in% c(202010, 202011, 202012, 202101, 202102, 202103, 202104, 202105)]))
+sum(is.na(dataset[foto_mes %in% c(202010, 202011, 202012, 202101, 202102, 202103, 202104, 202105, 202107)]))
 
 #------------------------------------------------------------------------------
 # LAGS 1, 3 y 6 ################################################################
