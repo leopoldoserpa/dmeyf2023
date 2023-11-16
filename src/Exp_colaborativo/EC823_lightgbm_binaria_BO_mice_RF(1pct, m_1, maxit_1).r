@@ -364,7 +364,7 @@ dataset[combined_filter, names(selected_variables) := NA]
 
 #1% de los continuan en el periodo de entrenamiento
 continua_training_0.01 <- sample_frac(dataset[dataset$foto_mes %in% c(202010,202011,202012, 202101, 202102, 202103)
-                                             & clase_ternaria == "CONTINUA"], 0.01, seed = 123)
+                                             & clase_ternaria == "CONTINUA"], 0.01, seed = PARAM$lgb_semilla)
 
 #100% BAJA+1 Y BAJA+2
 no_continua_training <- dataset[dataset$foto_mes %in% c(202010,202011,202012, 202101, 202102, 202103) 
