@@ -364,7 +364,7 @@ dataset[combined_filter, names(selected_variables) := NA]
 
 #1% de los continuan en el periodo de entrenamiento
 continua_training_0.01 <- sample_frac(dataset[dataset$foto_mes %in% c(202010,202011,202012, 202101, 202102, 202103)
-                                             & clase_ternaria == "CONTINUA"], 0.01, seed = 123)
+                                             & clase_ternaria == "CONTINUA"], 0.01, seed = PARAM$lgb_semilla)
 
 #100% BAJA+1 Y BAJA+2
 no_continua_training <- dataset[dataset$foto_mes %in% c(202010,202011,202012, 202101, 202102, 202103) 
@@ -378,7 +378,7 @@ time_imp.train <- system.time({imp.train <- mice(
   seed = PARAM$lgb_semilla, 
   #n.core = 3, 
   m = 1,
-  maxit = 1,
+  maxit = 5,
   printFlag = TRUE
   #verbose = TRUE,
   #ignore = ignored
@@ -386,13 +386,13 @@ time_imp.train <- system.time({imp.train <- mice(
 
 
 time_imp.test <-  system.time({imp.test <- mice.mids(imp.train, newdata = dataset[foto_mes %in% c(202105),..campos_buenos],
-                                                  maxit=1,printFlag = T)})
+                                                  maxit=5,printFlag = T)})
 
 time_imp.val <-system.time({imp.val <- mice.mids(imp.train, newdata = dataset[foto_mes %in% c(202104),..campos_buenos],
-                                  maxit=1,printFlag = T)})
+                                  maxit=5,printFlag = T)})
 
 time_imp.train_full <- system.time({imp.train_full <- mice.mids(imp.train,newdata = dataset[foto_mes %in% c(202010,202011,202012, 202101, 202102, 202103),..campos_buenos], 
-                                               maxit=1,printFlag = T)})
+                                               maxit=5,printFlag = T)})
 
 # Chequeo nulos
 sum(is.na(dataset[foto_mes %in% c(202010, 202011, 202012, 202101, 202102, 202103, 202104, 202105)]))
