@@ -18,6 +18,11 @@ require("lightgbm")
 require("DiceKriging")
 require("mlrMBO")
 
+#Para imputacion
+install.packages("mice")
+library(mice)
+library(dplyr)
+
 # para que se detenga ante el primer error
 # y muestre el stack de funciones invocadas
 options(error = function() {
@@ -356,6 +361,17 @@ dataset[combined_filter, names(selected_variables) := NA]
 
 #------------------------------------------------------------------------------
 #Imputación de nulos
+
+#1% de los continuan en el periodo de entrenamiento
+continua_training_0.01 <- sample_frac(dataset[dataset$foto_mes %in% c(202010,202011,202012, 202101, 202102, 202103)
+                                             & clase_ternaria == "CONTINUA"], 0.01, seed = 123)
+
+#100% BAJA+1 Y BAJA+2
+no_continua_training <- dataset[dataset$foto_mes %in% c(202010,202011,202012, 202101, 202102, 202103) 
+                                & clase_ternaria != "CONTINUA"]
+
+training_subsampling_continua <- rbind(continua_training_0.01, no_continua_training)
+
 time_imp.train <- system.time({imp.train <- mice(
   data = training_subsampling_continua[,..campos_buenos], 
   method = 'rf', 
