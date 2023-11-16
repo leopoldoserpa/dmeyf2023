@@ -33,7 +33,7 @@ options(error = function() {
 PARAM <- list()
 
 #INDICAR METODO DE IMPUTACION
-metodo_imputacion <- "media"
+metodo_imputacion <- "mice_RF"
 
 PARAM$experimento <- paste("EC_HT8230",metodo_imputacion,sep="_")
 
@@ -359,7 +359,7 @@ dataset[combined_filter, names(selected_variables) := NA]
 time_imp.train <- system.time({imp.train <- mice(
   data = training_subsampling_continua[,..campos_buenos], 
   method = 'rf', 
-  parallelseed = 123, 
+  parallelseed = PARAM$lgb_semilla, 
   #n.core = 3, 
   m = 1,
   maxit = 1,
@@ -370,13 +370,13 @@ time_imp.train <- system.time({imp.train <- mice(
 
 
 time_imp.test <-  system.time({imp.test <- mice.mids(imp.train, newdata = dataset[foto_mes %in% c(202105),..campos_buenos],
-                                                  maxit=1,printFlag = T), seed =123})
+                                                  maxit=1,printFlag = T), seed =PARAM$lgb_semilla})
 
 time_imp.val <-system.time({imp.val <- mice.mids(imp.train, newdata = dataset[foto_mes %in% c(202104),..campos_buenos],
-                                  maxit=1,printFlag = T), seed =123})
+                                  maxit=1,printFlag = T), seed =PARAM$lgb_semilla})
 
 time_imp.train_full <- system.time({imp.train_full <- mice.mids(imp.train,newdata = dataset[foto_mes %in% c(202010,202011,202012, 202101, 202102, 202103),..campos_buenos], 
-                                               maxit=1,printFlag = T), seed =123})
+                                               maxit=1,printFlag = T), seed =PARAM$lgb_semilla})
 
 # Chequeo nulos
 sum(is.na(dataset[foto_mes %in% c(202010, 202011, 202012, 202101, 202102, 202103, 202104, 202105)]))
