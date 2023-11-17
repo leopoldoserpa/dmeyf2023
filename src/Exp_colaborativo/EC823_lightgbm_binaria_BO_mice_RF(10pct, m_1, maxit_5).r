@@ -362,7 +362,7 @@ dataset[combined_filter, names(selected_variables) := NA]
 #------------------------------------------------------------------------------
 #Imputación de nulos
 
-#1% de los continuan en el periodo de entrenamiento
+#10% de los continuan en el periodo de entrenamiento
 continua_training_0.1 <- sample_frac(dataset[dataset$foto_mes %in% c(202010,202011,202012, 202101, 202102, 202103)
                                              & clase_ternaria == "CONTINUA"], 0.1, seed = PARAM$lgb_semilla)
 
