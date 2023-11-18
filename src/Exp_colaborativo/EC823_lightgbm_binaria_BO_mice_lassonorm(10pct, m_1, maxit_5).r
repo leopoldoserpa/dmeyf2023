@@ -407,40 +407,38 @@ sum(is.na(dataset[foto_mes %in% c(202010, 202011, 202012, 202101, 202102, 202103
 
 ------------------#Extraigo tiempo de ejecucion
 # Extract relevant information
-result_time_imp.train <- data.frame(
+time_imp.train <- data.frame(
   user = time_imp.train[1],
   system = time_imp.train[2],
   elapsed = time_imp.train[3]
 )
 
-result_time_imp.test <- data.frame(
+time_imp.test <- data.frame(
   user = time_imp.test[1],
   system = time_imp.test[2],
   elapsed = time_imp.test[3]
 )
 
-result_time_imp.val <- data.frame(
+time_imp.val <- data.frame(
   user = time_imp.val[1],
   system = time_imp.val[2],
   elapsed = time_imp.val[3]
 )
 
-result_time_imp.train_full <- data.frame(
-  user = tima_imp.train_full[1],
-  system = tima_imp.train_full[2],
-  elapsed = tima_imp.train_full[3]
+time_imp.train_full <- data.frame(
+  user = time_imp.train_full[1],
+  system = time_imp.train_full[2],
+  elapsed = time_imp.train_full[3]
 )
 
 # Create a new column with the desired row names
-result_time_imp.train$dataset <- "train"
-result_time_imp.test$dataset <- "test"
-result_time_imp.val$dataset <- "val"
-result_time_imp.train_full$dataset <- "train_full"
+time_imp.train$dataset <- "train"
+time_imp.test$dataset <- "test"
+time_imp.val$dataset <- "val"
+time_imp.train_full$dataset <- "train_full"
 
 # Combine the data frames
-combined_data <- rbind(result_time_imp.train, result_time_imp.test, result_time_imp.val, result_time_imp.train_full)
-
-rbind(result_time_imp.train, result_time_imp.test, result_time_imp.val,result_time_imp.train_full)
+combined_data <- rbind(time_imp.train, time_imp.test, time_imp.val, time_imp.train_full)
 
 # Set the row names based on the "dataset" column
 rownames(combined_data) <- combined_data$dataset
