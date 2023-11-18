@@ -405,6 +405,9 @@ dataset[foto_mes %in% c(202105),campos_buenos] <- complete(imp.test)
 # Chequeo que no hay nulos
 sum(is.na(dataset[foto_mes %in% c(202010, 202011, 202012, 202101, 202102, 202103, 202104, 202105)]))
 
+# Exporto nulos imputados
+fwrite(dataset, file = "~/buckets/b1/PARAM$experimento/dataset_imputado.csv.gz")
+
 ------------------#Extraigo tiempo de ejecucion
 # Extract relevant information
 time_imp.train <- data.frame(
