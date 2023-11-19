@@ -29,11 +29,11 @@ PARAM$finalmodel$semilla <- c(290497, 540187, 987851, 984497, 111893, 100103, 10
                               191071,337511,400067,991751,729191,729199,729203,729217,729257)
 
 # hiperparametros intencionalmente NO optimos
-PARAM$finalmodel$optim$num_iterations <- 894
-PARAM$finalmodel$optim$learning_rate <- 0.0708480381061863
-PARAM$finalmodel$optim$feature_fraction <- 0.432685265537951
-PARAM$finalmodel$optim$min_data_in_leaf <- 18833
-PARAM$finalmodel$optim$num_leaves <- 370
+PARAM$finalmodel$optim$num_iterations <- 1484
+PARAM$finalmodel$optim$learning_rate <- 0.047854792112577
+PARAM$finalmodel$optim$feature_fraction <- 0.627254514884283
+PARAM$finalmodel$optim$min_data_in_leaf <- 44035
+PARAM$finalmodel$optim$num_leaves <- 506
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
