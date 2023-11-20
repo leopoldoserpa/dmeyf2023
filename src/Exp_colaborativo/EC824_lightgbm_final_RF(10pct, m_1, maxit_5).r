@@ -123,7 +123,7 @@ continua_training_0.1 <- sample_frac(dataset[dataset$foto_mes %in% c(202010,2020
 no_continua_training <- dataset[dataset$foto_mes %in% c(202010,202011,202012, 202101, 202102, 202103,202104,202105) 
                                 & clase_ternaria != "CONTINUA"]
 
-training_subsampling_continua <- rbind(continua_training_0.01, no_continua_training)
+training_subsampling_continua <- rbind(continua_training_0.1, no_continua_training)
 
 time_imp.train <- system.time({imp.train <- mice(
   data = training_subsampling_continua[,..campos_buenos], 
