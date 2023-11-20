@@ -32,7 +32,7 @@ PARAM$input$future <- c(202107) # meses donde se aplica el modelo
 PARAM$finalmodel$semilla <- c(290497, 540187, 987851, 984497, 111893, 100103, 100189, 101987, 991981, 991987,106853,
                               191071,337511,400067,991751,729191,729199,729203,729217,729257)
 
-PARAM$_semilla <- 540187
+PARAM$lgb_semilla <- 540187
 
 # hiperparametros intencionalmente NO optimos
 PARAM$finalmodel$optim$num_iterations <- 10892
