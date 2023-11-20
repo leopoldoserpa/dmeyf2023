@@ -373,7 +373,7 @@ no_continua_training <- dataset[dataset$foto_mes %in% c(202010,202011,202012, 20
 training_subsampling_continua <- rbind(continua_training_0.1, no_continua_training)
 
 pred <- quickpred(dataset[foto_mes %in% c(202010,202011,202012, 202101, 202102, 202103), ..campos_buenos], 
-                  mincor=0.1)
+                  mincor=0.3)
 
 time_imp.train <- system.time({imp.train <- mice(
   data = training_subsampling_continua[,..campos_buenos], 
