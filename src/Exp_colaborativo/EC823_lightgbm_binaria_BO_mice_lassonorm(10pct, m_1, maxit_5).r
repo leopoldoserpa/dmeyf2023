@@ -372,6 +372,9 @@ no_continua_training <- dataset[dataset$foto_mes %in% c(202010,202011,202012, 20
 
 training_subsampling_continua <- rbind(continua_training_0.1, no_continua_training)
 
+pred <- quickpred(dataset[foto_mes %in% c(202010,202011,202012, 202101, 202102, 202103), .SD, .SDcols = !c('clase_ternaria')], 
+                  mincor=0.1)
+
 time_imp.train <- system.time({imp.train <- mice(
   data = training_subsampling_continua[,..campos_buenos], 
   method = 'lasso.norm', 
@@ -379,7 +382,8 @@ time_imp.train <- system.time({imp.train <- mice(
   #n.core = 3, 
   m = 1,
   maxit = 5,
-  printFlag = TRUE
+  printFlag = TRUE,
+  predictorMatrix = pred
   #verbose = TRUE,
   #ignore = ignored
 )})
