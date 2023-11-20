@@ -372,7 +372,7 @@ no_continua_training <- dataset[dataset$foto_mes %in% c(202010,202011,202012, 20
 
 training_subsampling_continua <- rbind(continua_training_0.1, no_continua_training)
 
-pred <- quickpred(dataset[foto_mes %in% c(202010,202011,202012, 202101, 202102, 202103), .SD, .SDcols = !c('clase_ternaria')], 
+pred <- quickpred(dataset[foto_mes %in% c(202010,202011,202012, 202101, 202102, 202103), ..campos_buenos], 
                   mincor=0.1)
 
 time_imp.train <- system.time({imp.train <- mice(
@@ -410,7 +410,7 @@ dataset[foto_mes %in% c(202105),campos_buenos] <- complete(imp.test)
 sum(is.na(dataset[foto_mes %in% c(202010, 202011, 202012, 202101, 202102, 202103, 202104, 202105)]))
 
 # Exporto nulos imputados
-fwrite(dataset, file = "~/buckets/b1/PARAM$experimento/dataset_imputado.csv.gz")
+fwrite(dataset, file = "~/buckets/b1/exp/PARAM$experimento/dataset_imputado.csv.gz")
 
 ------------------#Extraigo tiempo de ejecucion
 # Extract relevant information
@@ -454,7 +454,7 @@ rownames(combined_data) <- combined_data$dataset
 combined_data <- combined_data[, -ncol(combined_data)]
 
 # Write to CSV
-write.csv(combined_data, file = "~/buckets/b1/PARAM$experimento/time_results.csv")
+write.csv(combined_data, file = "~/buckets/b1/exp/PARAM$experimento/time_results.csv")
 
 #------------------------------------------------------------------------------
 
