@@ -49,6 +49,9 @@ setwd("~/buckets/b1")
 # cargo el dataset donde voy a entrenar
 dataset <- fread(PARAM$input$dataset, stringsAsFactors = TRUE)
 
+# Feature Engineering Historico  ----------------------------------------------
+campos_buenos <- setdiff(colnames(dataset), c('foto_mes','numero_de_cliente',"clase_ternaria", "clase01"))
+
 
 # Catastrophe Analysis  -------------------------------------------------------
 
