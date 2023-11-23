@@ -77,7 +77,7 @@ no_continua_training <- dataset[dataset$foto_mes %in% c(202010,202011,202012, 20
 
 training_subsampling_continua <- rbind(continua_training_0.01, no_continua_training)
 
-time_imp.train <- system.time({imp.train <- mice(
+imp.train <- mice(
   data = training_subsampling_continua[,..campos_buenos], 
   method = 'rf', 
   seed = PARAM$lgb_semilla, 
@@ -87,14 +87,14 @@ time_imp.train <- system.time({imp.train <- mice(
   printFlag = TRUE
   #verbose = TRUE,
   #ignore = ignored
-)})
+)
 
 
-time_imp.future <-  system.time({imp.future <- mice.mids(imp.train, newdata = dataset[foto_mes %in% c(202107),..campos_buenos],
-                                                  maxit=5,printFlag = T)})
+imp.future <- mice.mids(imp.train, newdata = dataset[foto_mes %in% c(202107),..campos_buenos],
+                                                  maxit=5,printFlag = T)
 
-time_imp.train_full <- system.time({imp.train_full <- mice.mids(imp.train,newdata = dataset[foto_mes %in% c(202010,202011,202012, 202101, 202102, 202103,202104,202105),..campos_buenos], 
-                                               maxit=5,printFlag = T)})
+imp.train_full <- mice.mids(imp.train,newdata = dataset[foto_mes %in% c(202010,202011,202012, 202101, 202102, 202103,202104,202105),..campos_buenos], 
+                                               maxit=5,printFlag = T)
 
 # Chequeo nulos
 sum(is.na(dataset[foto_mes %in% c(202010, 202011, 202012, 202101, 202102, 202103, 202104, 202105,202107)]))
