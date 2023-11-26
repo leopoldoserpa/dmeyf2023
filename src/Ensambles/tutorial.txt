@@ -1,0 +1,2 @@
+Ensable
+29 meses, undersampling 1, neg_bagging_fraction optimizado
