@@ -96,7 +96,7 @@ PARAM$lgb_basicos <- list(
 # Aqui se cargan los hiperparametros que se optimizan
 #  en la Bayesian Optimization
 PARAM$bo_lgb <- makeParamSet(
-  makeNumericParam("learning_rate", lower = 0.02, upper = 1.0),
+  makeNumericParam("learning_rate", lower = 0.02, upper = 0.3),
   makeNumericParam("feature_fraction", lower = 0.01, upper = 1.0),
   makeIntegerParam("num_leaves", lower = 8L, upper = 1024L),
   makeIntegerParam("min_data_in_leaf", lower = 100L, upper = 50000L),
@@ -393,11 +393,11 @@ dataset[ foto_mes==202006,  cmobile_app_trx   := NA ]
 #Imputación de nulos
 
 # Convierto integer a numeric (me permite poder hacer las cuentas del feature engeneering intrames)
-for (i in colnames(dataset)) {
-  if (class(dataset[[i]]) == "integer") {
-    dataset[[i]] <- as.numeric(dataset[[i]])
-  }
-}
+#for (i in colnames(dataset)) {
+#  if (class(dataset[[i]]) == "integer") {
+#    dataset[[i]] <- as.numeric(dataset[[i]])
+#  }
+#}
 
 #------------------------------------------------------------------------------
 
@@ -415,6 +415,14 @@ for (i in features_pesos) {
 }
 
 # Feature Engineering Intrames---------------------------------------------
+
+# Convierto integer a numeric (me permite poder hacer las cuentas del feature engeneering intrames)
+for (i in colnames(dataset)) {
+  if (class(dataset[[i]]) == "integer") {
+    dataset[[i]] <- as.numeric(dataset[[i]])
+  }
+}
+
 dataset[, "rentabilidad_mensual" := mrentabilidad / fcoalesce(mrentabilidad_annual, 0)]
 
 dataset[, "mcomisiones_rentabilidad" := mcomisiones / fcoalesce(mrentabilidad_annual, 0)]
@@ -527,7 +535,6 @@ dataset[, "comision_promedio" := ifelse(fcoalesce((ccomisiones_mantenimiento + c
 
 dataset[, "monto_total_operado_forex" := fcoalesce(mforex_buy, 0) + fcoalesce(mforex_sell, 0)]
 
-# Calculate the column "monto_operado_promedio_forex" with handling division by zero
 dataset[, "monto_operado_promedio_forex" := ifelse(fcoalesce(cforex, 0) != 0,
                                                    (fcoalesce(mforex_buy, 0) + fcoalesce(mforex_sell, 0)) / fcoalesce(cforex, 0),
                                                    NA)]
