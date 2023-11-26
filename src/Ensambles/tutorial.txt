@@ -1,2 +1,12 @@
-Ensable
-29 meses, undersampling 1, neg_bagging_fraction optimizado
+-------------------ensamble_1_LRbajo_neg_bagging
+29 meses, 
+undersampling 0.5, 
+neg_bagging_fraction optimizado
+zero_ratio NA
+ranking
+feature engineering intrames
+lags y delta lags 1,3,6
+
+-----------ensamble_2_negbagging_LRalto_neg_bagging
+
+idem ensable 1 pero c lr 0.7-1.1 

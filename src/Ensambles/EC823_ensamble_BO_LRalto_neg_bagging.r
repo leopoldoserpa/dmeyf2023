@@ -33,7 +33,7 @@ options(error = function() {
 PARAM <- list()
 
 #INDICAR METODO DE IMPUTACION
-metodo_imputacion <- "ensamble_1_LRbajo_neg_bagging"
+metodo_imputacion <- "ensamble_2_LRalto_neg_bagging"
 
 PARAM$experimento <- paste("EC_HT8230",metodo_imputacion,sep="_")
 
@@ -96,7 +96,7 @@ PARAM$lgb_basicos <- list(
 # Aqui se cargan los hiperparametros que se optimizan
 #  en la Bayesian Optimization
 PARAM$bo_lgb <- makeParamSet(
-  makeNumericParam("learning_rate", lower = 0.02, upper = 0.3),
+  makeNumericParam("learning_rate", lower = 0.7, upper = 1.1),
   makeNumericParam("feature_fraction", lower = 0.01, upper = 1.0),
   makeIntegerParam("num_leaves", lower = 8L, upper = 1024L),
   makeIntegerParam("min_data_in_leaf", lower = 100L, upper = 50000L),
