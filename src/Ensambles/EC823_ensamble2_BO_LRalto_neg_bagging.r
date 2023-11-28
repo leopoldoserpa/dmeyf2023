@@ -392,12 +392,12 @@ dataset[ foto_mes==202006,  cmobile_app_trx   := NA ]
 #------------------------------------------------------------------------------
 #Imputación de nulos
 
-# Convierto integer a numeric (me permite poder hacer las cuentas del feature engeneering intrames)
-for (i in colnames(dataset)) {
-  if (class(dataset[[i]]) == "integer") {
-    dataset[[i]] <- as.numeric(dataset[[i]])
-  }
-}
+# # Convierto integer a numeric (me permite poder hacer las cuentas del feature engeneering intrames)
+# for (i in colnames(dataset)) {
+#   if (class(dataset[[i]]) == "integer") {
+#     dataset[[i]] <- as.numeric(dataset[[i]])
+#   }
+# }
 
 #------------------------------------------------------------------------------
 
@@ -412,6 +412,13 @@ features_pesos <- as.character(diccionario[unidad == 'pesos', campo])
 # Loop through each column in features_pesos and calculate the rank
 for (i in features_pesos) {
   dataset[, (i) := frankv(dataset[[i]], order = 1L, na.last = 'keep', ties.method = "dense")]
+}
+
+# Convierto integer a numeric (me permite poder hacer las cuentas del feature engeneering intrames)
+for (i in colnames(dataset)) {
+  if (class(dataset[[i]]) == "integer") {
+    dataset[[i]] <- as.numeric(dataset[[i]])
+  }
 }
 
 # Feature Engineering Intrames---------------------------------------------
