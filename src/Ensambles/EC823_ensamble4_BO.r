@@ -403,15 +403,15 @@ dataset[ foto_mes==202006,  cmobile_app_trx   := NA ]
 # Data Drifting----------------------------------------------------------------
 # por ahora, no hago nada
 
-# Ranking de las variables expresadas en pesos pero sin centrar en cero
-# diccionario <- fread("~/buckets/b1/datasets/DiccionarioDatos_2023.csv")
-# 
-# features_pesos <- as.character(diccionario[unidad == 'pesos', campo])
-# 
-# # Loop through each column in features_pesos and calculate the rank
-# for (i in features_pesos) {
-#   dataset[, (i) := frankv(dataset[[i]], order = 1L, na.last = 'keep', ties.method = "dense")]
-# }
+#Ranking de las variables expresadas en pesos pero sin centrar en cero
+diccionario <- fread("~/buckets/b1/datasets/DiccionarioDatos_2023.csv")
+
+features_pesos <- as.character(diccionario[unidad == 'pesos', campo])
+
+# Loop through each column in features_pesos and calculate the rank
+for (i in features_pesos) {
+  dataset[, (i) := frankv(dataset[[i]], order = 1L, na.last = 'keep', ties.method = "dense")]
+}
 
 # Convierto integer a numeric (me permite poder hacer las cuentas del feature engeneering intrames)
 for (i in colnames(dataset)) {
