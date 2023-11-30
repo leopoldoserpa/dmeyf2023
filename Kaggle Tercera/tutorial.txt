@@ -1,0 +1,5 @@
+Orden de ejecución:
+- Clase ternaria
+- Correr primero las BO 
+- Luego correr los modelos finales (en cada uno se realizó un semillerio, se propueso 20, pero no se pudo terminar en todos)
+- Ensamblar las probabilidades de los ensambles (semillerios)
